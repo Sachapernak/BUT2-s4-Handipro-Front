@@ -1,0 +1,106 @@
+/* Généralités partagées avec la page des matchs */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Roboto Flex', sans-serif;
+    font-size: clamp(12px, 1.2vw, 18px);
+    background-color: #40607c;
+    color: #f4f4f4;
+}
+
+
+/* Conteneur principal de la page d'accueil */
+.main {
+    margin-left: 230px;
+    width: 80%;
+    background-color: #40607c;
+    color: #fdfdfd;
+    box-sizing: border-box; /* S'assure que padding/border n'ajoutent pas à la largeur */
+}
+
+
+/* Titres de section */
+.MatchRecentTitre h3 {
+    margin-bottom: 2vh;
+    color: #FFFFFF;
+}
+
+/* Conteneur flexible pour matchs et joueurs */
+.flexContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+/* Style pour une carte match, inspiré du style des joueurs */
+.match {
+    flex: 1 1 40%;
+    background-color: #fdfdfd;
+    color: #111111;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Titres et textes des matchs */
+.matchTitle {
+    font-size: clamp(14px, 1.5vw, 32px);
+    margin: 0.5em 0;
+}
+
+.matchText,
+.matchTextMJ {
+    font-size: clamp(10px, 1.15vw, 32px);
+    margin: 0.3em 0;
+}
+
+/* Section meilleur joueur (MJ) dans un match */
+.mj {
+    border: 2px solid #111;
+    margin: 1em 0;
+    background-color: #fff;
+    color: #111;
+    border-radius: 3px;
+    padding: 0.5em;
+}
+
+.mj h5 {
+    font-size: clamp(10px, 1.2vw, 35px);
+    display: inline;
+    margin: 0.5em 0;
+}
+
+.mj span {
+    font-size: clamp(10px, 1.3vw, 35px);
+}
+
+/* Adaptations responsive pour petits écrans */
+@media screen and (max-width: 800px) {
+    .match {
+        flex: 1 1 100%;
+        margin-bottom: 2vh;
+    }
+}
+
+.joueur {
+    background-color: #FFFFFF;
+    color: #111111;
+    width: calc(30% - 15px);
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border: 2px solid #FFFFFF; 
+}
+
+.joueur span, .mj span {
+    color: #ebaf18;
+}
+
+.joueur h5 {
+    display: flex; 
+    align-items: center; 
+    gap: 30px; 
+}

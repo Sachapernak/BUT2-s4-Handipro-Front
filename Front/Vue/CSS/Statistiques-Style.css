@@ -1,0 +1,70 @@
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Roboto Flex', sans-serif;
+    color: #f4f4f4;
+    background-color: #40607c;
+}
+
+.main {
+    margin-left: 190px;
+    padding: 20px; 
+    display : flex;
+    flex-direction: column;
+}
+
+h2 {
+    padding-left: 5%;
+}
+
+.stats-match-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;  
+    gap: 20px; 
+}
+
+.recapitulatifMatch {
+    background-color: white; 
+    padding: 15px;
+    color: black;
+    border-radius: 8px;
+    flex: 1;  
+    box-sizing: border-box; 
+    text-align: center;  
+}
+
+
+.recapitulatifMatch h3 {
+    margin-bottom: 10px;
+    font-size: 1.5rem;  
+}
+
+.recapitulatifMatch p {
+    font-size: 1.2rem;  
+    margin: 5px 0;
+}
+
+.recap-joueur-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.recap-joueur-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.recap-joueur-table th {
+    background-color: #f2f2f2;
+    color: #2c3e51;
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+

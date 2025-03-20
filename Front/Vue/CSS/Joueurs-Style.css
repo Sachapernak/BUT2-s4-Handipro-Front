@@ -1,0 +1,130 @@
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Roboto Flex', sans-serif;
+    color: #f4f4f4;
+    background-color: #40607c;
+}
+
+.main {
+    margin-left: 190px;
+    padding: 20px; 
+}
+
+h2 {
+    padding-left: 5%;
+}
+
+/*********************************
+ * DESIGN PAGE
+ *********************************/
+  
+ .en-tete {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    flex-wrap: wrap; 
+    gap: 10px;
+    column-gap: 40px;
+    margin-bottom: 20px; /* Espace sous l'en-tête */
+}
+
+.recherche {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#search-bar {
+    width: 400px;
+    height: 37px;
+    border: 2px solid #ccc;
+    border-radius: 25px 0 0 25px;
+    padding: 0 15px;
+    font-size: 16px;
+    outline: none;
+    border-right: none;
+    background-color: #fff;
+}
+
+#search-button {
+    height: 40px;
+    width: 50px;
+    border: 2px solid #ccc;
+    border-radius: 0 25px 25px 0;
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: none;
+}
+
+#cartesJoueur {
+    position: relative;
+}
+
+.flexContainer {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; 
+    align-items: flex-start; 
+    gap: 20px; 
+}
+
+.divCliquable {
+    text-decoration: none; 
+    color: inherit; 
+    margin : 20px;
+    min-width: 150px;
+    max-width: 23%;
+    flex: 1 1 25%;
+}
+
+.divCliquable .joueur  {
+    background-color: #fdfdfd;
+    color: #111111;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.divCliquable .joueur div {
+    margin-left: 1vw;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    display: flex; 
+    flex-direction: column; 
+}
+.divCliquable .joueur div h5{
+    text-align: center;
+    color:#e55c36;
+    font-size: clamp(10px, 1.2vw, 35px);
+    display : inline;
+}
+
+.divCliquable .joueur div h6 {
+    font-size: clamp(9px, 1.0vw, 20px); /* Ajustez la taille de la police ici */
+}
+
+.divCliquable .joueur div span{
+    text-align: center;
+    display: inline-block;
+    font-size: clamp(10px, 1.3vw, 35px);
+}
+
+#btn-ajouter-joueur{
+    padding: 10px 20px;
+    font-size: clamp(14px, 1vw, 18px);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    background-color: #e55c36;
+    
+}
+#btn-ajouter-joueur:hover {
+    background-color: #f09b62;
+}
