@@ -1,0 +1,82 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Roboto Flex', sans-serif; /* Police uniforme pour tout le texte */
+    color: #f4f4f4;
+    font-size: clamp(14px, 1.5vw, 24px);
+    background-color: #40607c;
+}
+
+.main {
+    margin-left: 190px;
+    padding: 20px;
+    text-align: center;
+}
+
+.saisieNote {
+    margin: 40px auto;
+    width: 40%;
+    background-color: #355973; 
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #f4f4f4;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.saisieNote h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 32px; /* Taille agrandie pour le nom et prénom */
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+    font-size: clamp(14px, 1vw, 18px);
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: clamp(14px, 1vw, 18px);
+    outline: none;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px; /* Réduire l'espace entre les boutons */
+    width: 100%; /* S'assurer que les boutons prennent toute la largeur */
+    gap: 10px; /* Espacement entre les boutons */
+}
+
+button {
+    padding: 10px 20px;
+    font-size: clamp(14px, 1vw, 18px);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 48%; /* Boutons plus rapprochés */
+}
+
+button.btn-valider {
+    background-color: #28a745;
+    color: white;
+}
+
+button.btn-annuler {
+    background-color: #dc3545;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.9;
+}
