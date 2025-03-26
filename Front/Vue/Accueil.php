@@ -23,16 +23,16 @@ foreach ($listeMatchs as $match) {
     $id_match =$match["id_match"] ?? "";
 
     //Enregistrer dans les variables les informations nécessaires
-    $resultat = $controleur->afficherResultat($match["resultat"] ?? "");
+    $resultat = $match["resultat"];
     $adversaire = $match["adversaire"] ?? "";
-    $lieu = $controleur->afficherLieu($match["lieu"] ?? "");
-    $date_heure = $controleur->afficherDateHeure($match["data_et_heure"] ?? "");
+    $lieu = $match["lieu"] == null | $match["lieu"] == "" ? ", lieu non renseigné" : $match["lieu"];
+    $date_heure = $match["date_et_heure"] ?? "";
     $bestJoueur = $controleur->getMeilleurJoueur($id_match);
-    $n_licence = $bestJoueur == null ? "" : $bestJoueur["numero_licence"] ?? "";
+    $n_licence = $bestJoueur == null ? "" : $bestJoueur["n_licence"] ?? "";
 
     $commentaire = $controleur->getCommentaireJoueur($n_licence, $date_heure);
     $participation = $controleur->getParticipation($n_licence, $id_match);
-    $note= $participation == null ? 0 : $participation->getNote();
+    $note= $participation == null ? 0 : $participation['note'];
 
    
     $matchs .= '
@@ -58,8 +58,8 @@ $joueurs = "";
 foreach ($listeJoueurs as $joueur) {
     $nom = $joueur["nom"];
     $prenom = $joueur["prenom"];
-    $licence = $joueur["numero_licence"];
-    $note = $controleurJoueurs->getNoteMoyenneJoueur($joueur->getN_licence());
+    $licence = $joueur["n_licence"];
+    $note = $controleurJoueurs->getNoteMoyenneJoueur($licence);
 
     $joueurs .= '
     <div class="joueur">

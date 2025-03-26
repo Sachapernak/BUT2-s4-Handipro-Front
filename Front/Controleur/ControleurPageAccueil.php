@@ -24,7 +24,8 @@ class ControleurPageAccueil
      * @param string $idManager L'identifiant du manager.
      * @return string Le prénom et le nom du manager, ou une chaîne vide si non trouvé.
      */
-    public function infoPageAccueil($idManager) {
+    public function infoPageAccueil(string $idManager): string
+    {
         // Données à envoyer en GET
         $data = "?action=manager&id=" . $idManager;
         // URL de l'API de connexion
@@ -39,12 +40,12 @@ class ControleurPageAccueil
         if (isset($result['data']['prenom']) && isset($result['data']['nom'])) {
             $prenom = $result['data']['prenom'];
             $nom = $result['data']['nom'];
-            // Optionnel : concaténer prénom et nom
+
             return $prenom . " " . $nom;
         }
         // En cas d'erreur, retourner une chaîne vide ou gérer l'erreur autrement
         return "";
-    } // TODO : A TESTER. Devrait etre OK !
+    }
 
      /**
      * Récupère les matchs récents (les deux derniers matchs passés).
@@ -54,10 +55,10 @@ class ControleurPageAccueil
     public function getMatchsRecents (){
 
         // Données à envoyer en GET
-        $data = "?type_match="."recent";
+        $data = "?action=getMatchsRecents";
 
         // URL de l'API de connexion
-        $url = BACKURL."EndPointAccueil.php".$data;
+        $url = BACKURL."EndPointMatch.php".$data;
 
         // Appel de l'API via POST en utilisant la méthode callAPI
         $response = \Controleur\MethodesCurl::callAPI("GET", $url);
@@ -65,7 +66,6 @@ class ControleurPageAccueil
         // Décodage de la réponse JSON
         $result = json_decode($response, true);
 
-        error_log("Match ".$result['data']);
         return $result['data'];
     }
 
@@ -77,15 +77,19 @@ class ControleurPageAccueil
      */
     public function getMeilleurJoueur ($idMatch){
 
-        $res = null;
-       /* $n_licence = $this->jouerDAO->getMeilleurJoueurMatch($idMatch);
-        
-        if ($n_licence != null){
-            $recherche = new RechercherUnJoueur($this->joueurDAO, $n_licence);
-            $res = $recherche->executer();
-        }
-        */
-        return $res;  
+        // Données à envoyer en GET
+        $data = "?action=getMeilleurJoueurMatch&id=" . $idMatch;
+
+        // URL de l'API de connexion
+        $url = BACKURL."EndPointMatch.php".$data;
+
+        // Appel de l'API via POST en utilisant la méthode callAPI
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+
+        // Décodage de la réponse JSON
+        $result = json_decode($response, true);
+        return $result['data'];
+
     }
 
     /**
@@ -96,14 +100,34 @@ class ControleurPageAccueil
      * @return string Le commentaire ou une chaîne vide s'il n'existe pas.
      */
     public function getCommentaireJoueur ($n_licence, $dateMatch) {
-       /*
-        $recherche = new RechercherUnCommentaire($this->commentaireDAO, $n_licence, $dateMatch);
-        $res = $recherche->executer();
-        if($res) {
-            return $res->getCommentaire();
+
+        if ($n_licence == null || $dateMatch == null) {
+            return "Pas de commentaire";
         }
-       */
-        return "";
+
+        $dateDuMatch = new DateTime($dateMatch);
+            // Données à envoyer en GET
+        $data = "?action=getCommentaireJoueur&id=".$n_licence;
+
+        // URL de l'API de connexion
+        $url = BACKURL."EndPointJoueur.php".$data;
+
+        // Appel de l'API via POST en utilisant la méthode callAPI
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+
+        // Décodage de la réponse JSON
+        $result = json_decode($response, true);
+
+        if ($result['data'] != null){
+            foreach($result['data'] as $commentaire){
+                $dateDuCom = new DateTime($commentaire['date']);
+                if ($dateDuCom->format('Y-m-d') == $dateDuMatch->format('Y-m-d')) {
+                    return $commentaire['commentaire'];
+                }
+            }
+        }
+
+        return "Pas de commentaire";
     }
 
     /**
@@ -111,35 +135,26 @@ class ControleurPageAccueil
      * 
      * @param string $n_licence Le numéro de licence du joueur.
      * @param int $id_match L'identifiant du match.
-     * @return J|null Un objet représentant la participation ou null si non trouvée.
+     * @return array | null Un objet représentant la participation ou null si non trouvée.
      */
     public function getParticipation ($n_licence, $id_match):?Array {
-        $res = null;
-        /*
-        $recherche = new RechercherJouer($this->jouerDAO, $n_licence, $id_match);
-        $res = $recherche->executer();
-        */
-        return $res;
+        // Données à envoyer en GET
+
+        $data = "?action=getInfosParticipation&idM=$id_match&idJ=$n_licence";
+
+        // URL de l'API de connexion
+        $url = BACKURL."EndPointParticipation.php".$data;
+
+        // Appel de l'API via POST en utilisant la méthode callAPI
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+
+        // Décodage de la réponse JSON
+        $result = json_decode($response, true);
+        return $result == null ? null : $result["data"];
+
     }
 
-    /**
-     * Affiche le résultat d'un match sous forme de texte.
-     * 
-     * @param string $resultat Le résultat brut (V, N, D).
-     * @return string Le texte correspondant (Victoire, Match nul, Défaite).
-     */
-    public function afficherResultat ($resultat): string {
-        switch ($resultat) {
-            case 'N':
-                return 'Match nul';
-            case 'V':
-                return 'Victoire';
-            case 'D':
-                return 'Défaite';
-            default:
-                return '';
-        }
-    }
+
 
     /**
      * Affiche le lieu d'un match sous forme de texte.
@@ -158,18 +173,6 @@ class ControleurPageAccueil
         }
     }
 
-    /**
-     * Formate la date et l'heure d'un match.
-     * 
-     * @param  $match L'objet match contenant la date et l'heure.
-     * @return string La date et l'heure formatées (Y-m-d H:i).
-     */
-    public function afficherDateHeure($date){
-        $dateTimeObj = new DateTime($date);
-        $date_heure = $dateTimeObj->format('Y-m-d H:i'); 
-        return $date_heure;
-
-    }
 
     /**
      * Récupère les joueurs actifs
@@ -177,9 +180,18 @@ class ControleurPageAccueil
      * @return array Un tableau contenant les joueurs actifs.
      */
     public function getJoueursActifs(){
-        /*
-        $res = $this->joueurDAO->findByStatut('Act');
-        return $res;
-        */
+        // Données à envoyer en GET
+        $data = "?action=getJoueursActifs";
+
+        // URL de l'API de connexion
+        $url = BACKURL."EndPointJoueur.php".$data;
+
+        // Appel de l'API via POST en utilisant la méthode callAPI
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+
+        // Décodage de la réponse JSON
+        $result = json_decode($response, true);
+
+        return $result['data'];
     }
 }
