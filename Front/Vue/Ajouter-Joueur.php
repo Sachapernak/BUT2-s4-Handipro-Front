@@ -8,7 +8,14 @@ use Controleur\ControleurPageAjouterJoueur;
 //Permet l'ajout du joueur lorsque le formulaire est soumis
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $controleur = new ControleurPageAjouterJoueur();
-    $controleur->ajouterJoueur();
+    $res = $controleur->ajouterJoueur();
+
+    error_log("AJOUT DE JOUEUR : ". implode($res));
+    if($res["status_code"] == 200){
+        header('Location: Joueurs.php');
+    } else {
+        echo '<script type="text/javascript">window.alert("'.$res['status_message'].'");</script>';
+    }
 }
 
 ?>

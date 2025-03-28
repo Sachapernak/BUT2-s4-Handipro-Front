@@ -2,37 +2,15 @@
 
 namespace Controleur;
 
-use DAO\JoueurDAO;
-use DAO\MatchDAO;
-use DAO\JouerDAO;
-use DAO\CommentaireDAO;
-use Controleur\RechercherJoueursActifs;
-use Controleur\RechercherJouerParMatch;
-use Controleur\SupprimerJouerParticipantsMatch;
-use Controleur\ObtenirTousLesCommentaires;
-
-use Modele\Jouer;
-
-
 class ControleurPageFeuilleDeMatch
 {
-    private $joueurDAO;
-    private $jouerDAO;
-    private $matchDAO;
-    private $commentaireDAO;
-    private $controleurJoueursParticipants;
 
      /**
      * Constructeur de la classe. Initialise les DAO nécessaires.
      */
     public function __construct()
     {
-        $this->joueurDAO = new JoueurDAO();
-        $this->jouerDAO = new JouerDAO();
-        $this->matchDAO = new MatchDAO();
-        $this->commentaireDAO = new CommentaireDAO();
 
-        $this->controleurJoueursParticipants = new ControleurPageMatchs();
     }
 
     
@@ -40,12 +18,16 @@ class ControleurPageFeuilleDeMatch
     /**
      * Crée une participation (relation joueur-match).
      *
-     * @param Jouer $jouer L'objet Jouer à insérer.
+     * @param array $jouer L'array Jouer à insérer. (n_licence, id_match, est_remplacant, role)
      */
     public function creerParticipation($jouer): void
     {
-        $creationMatch = new CreerJouer($this->jouerDAO, $jouer);
-        $creationMatch->executer();
+
+        $data = "";
+        $url = BACKURL."EndPointParticipation.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("POST", $url, $jouer);
+        $result = json_decode($response, true);
+
     }
 
       /**
@@ -56,8 +38,11 @@ class ControleurPageFeuilleDeMatch
      */
     public function supprimerParticipation($n_licence, $id_match): void
     {
-        $creationMatch = new SupprimerJouer($this->jouerDAO, $n_licence, $id_match);
-        $creationMatch->executer();
+        $data = "?idJ=$n_licence&idM=$id_match";
+        $url = BACKURL."EndPointParticipation.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("DELETE", $url);
+        $result = json_decode($response, true);
+
     }
 
 
@@ -75,7 +60,13 @@ class ControleurPageFeuilleDeMatch
             $n_licence = $joueursSelectionnes[$i]['licence'];
             $position = $joueursSelectionnes[$i]['position'];
             $role = $joueursSelectionnes[$i]['role'];
-            $jouer = new Jouer($n_licence, $id_match, $role, null, $position);
+            $jouer = array(
+                "n_licence" => $n_licence,
+                "id_match" => $id_match,
+                "role" => $role,
+                "note" => null,
+                "position" => $position
+            );
             $this->creerParticipation($jouer);
         }
         header('Location: Matchs.php');
@@ -88,8 +79,7 @@ class ControleurPageFeuilleDeMatch
      */
     public function viderJoueurPourUnMatch($id_match)
     {
-        $suppression = new SupprimerJouerParticipantsMatch($this->jouerDAO, $id_match);
-        $suppression->executer();
+        //TODO : FAIRE LA FONCTION QUAND ELLE EST DISPO DANS L'API
     }
 
 

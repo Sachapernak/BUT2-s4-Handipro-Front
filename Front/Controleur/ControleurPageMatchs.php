@@ -1,23 +1,14 @@
 <?php
 
 namespace Controleur;
+require_once 'Config.php';
 
-use DAO\JoueurDAO;
-use DAO\MatchDAO;
-use DAO\JouerDAO;
-use Controleur\RechercherJouerParMatch;
-use Controleur\RechercherMatchsAVenir;
-use Controleur\SupprimerUnMatch;
-use Modele\Jouer;
 
 use DateTime;
 
 class ControleurPageMatchs
 {
 
-    private $joueurDAO;
-    private $jouerDAO;
-    private $matchDAO;
 
     /**
      * Constructeur de la classe ControleurPageMatchs.
@@ -25,31 +16,22 @@ class ControleurPageMatchs
      */
     public function __construct()
     {
-        $this->joueurDAO = new JoueurDAO();
-        $this->jouerDAO = new JouerDAO();
-        $this->matchDAO = new MatchDAO();
+
     }
 
     /**
      * Récupère les joueurs participants à un match donné.
      *
      * @param int $id_match L'identifiant du match.
-     * @return array Un tableau d'objets Joueur représentant les joueurs participants.
+     * @return array Un tableau d'array Joueur représentant les joueurs participants.
      */
     public function getJoueursParticipants($id_match)
     {
-        $resultat = [];
-        $recherche = new RechercherJouerParMatch($this->jouerDAO, $id_match);
-        $listeMatchsJoues = $recherche->executer();
-        foreach ($listeMatchsJoues as $jouer) {
-            $n_licence = $jouer->getN_licence();
-            $recherche = new RechercherUnJoueur($this->joueurDAO, $n_licence);
-            $joueur = $recherche->executer();
-
-            $resultat[] = $joueur;
-        }
-
-        return $resultat;
+        $data = "?action=getJoueursParticipants&id=$id_match";
+        $url = BACKURL."EndPointMatch.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result == null ? null : $result["data"];
     }
 
     /**
@@ -57,13 +39,15 @@ class ControleurPageMatchs
      *
      * @param int $id_match L'identifiant du match.
      * @param string $id_joueur Le numéro de licence du joueur.
-     * @return Jouer Les informations de participation du joueur au match.
+     * @return array | null Les informations de participation du joueur au match.
      */
-    public function getInfosParticipants($id_match, $id_joueur): ?Jouer
+    public function getInfosParticipants($id_match, $id_joueur): ?array
     {
-        $recherche = new RechercherJouer($this->jouerDAO, $id_joueur, $id_match);
-        $resultat = $recherche->executer();
-        return $resultat;
+        $data = "?action=getInfosParticipation&idM=$id_match&idJ=$id_joueur";
+        $url = BACKURL."EndPointParticipation.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result == null ? null : $result["data"];
 
     }
 
@@ -71,36 +55,43 @@ class ControleurPageMatchs
     /**
      * Récupère les matchs à venir par rapport à la date actuelle.
      *
-     * @return array La liste des matchs à venir.
+     * @return array | null La liste des matchs à venir.
      */
-    public function getMatchsAVenir()
+    public function getMatchsAVenir(): ?array
     {
-        $recherche = new RechercherMatchsAVenir($this->matchDAO, date('Y-m-d'));
-        $res = $recherche->executer();
-        return $res;
+        $data = "?action=getMatchsAVenir";
+        $url = BACKURL."EndPointMatch.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result == null ? null : $result["data"];
     }
 
 
     /**
      * Récupère les matchs passés par rapport à la date actuelle.
      *
-     * @return array La liste des matchs passés.
+     * @return array | null La liste des matchs passés.
      */
-    public function getMatchsPasses()
+    public function getMatchsPasses(): ?array
     {
-        $recherche = new RechercherMatchsPasses($this->matchDAO, date('Y-m-d'));
-        $res = $recherche->executer();
-        return $res;
+        $data = "?action=getMatchsPasses";
+        $url = BACKURL."EndPointMatch.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result == null ? null : $result["data"];
     }
 
     /**
      * Affiche une chaîne d'étoiles en fonction de la note donnée.
      *
-     * @param int $note La note du joueur.
+     * @param $note La note du joueur.
      * @return string La représentation des étoiles.
      */
     public function afficherEtoiles($note): string
     {
+        if($note == null){
+            return "☆☆☆☆☆";
+        }
         $etoile = "";
         $nbrEtoilesTotal = 5;
         for ($i = 0; $i < $note; $i++) {
@@ -120,7 +111,7 @@ class ControleurPageMatchs
      * @param int $estRemplacant 1 pour remplaçant, 0 pour titulaire.
      * @return string Le statut du joueur.
      */
-    public function afficherRemplacement($estRemplacant)
+    public function afficherRemplacement(int $estRemplacant): string
     {
         $resultat = "";
         switch ($estRemplacant) {
@@ -141,8 +132,10 @@ class ControleurPageMatchs
      */
     public function supprimerMatch($idMatch): void
     {
-        $suppression = new SupprimerUnMatch($this->matchDAO, $idMatch);
-        $suppression->executer();
+        $data = "?action=supprimerMatch&id=$idMatch";
+        $url = BACKURL."EndPointMatch.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("DELETE", $url);
+        $result = json_decode($response, true);
     }
 
     /**
@@ -152,7 +145,6 @@ class ControleurPageMatchs
      * @return string Le résultat sous forme de texte.
      */
     public function afficherResultat($score){
-        $resultat = "";
         switch ($score) {
             case "V":
                 $resultat = "Victoire";
@@ -164,7 +156,7 @@ class ControleurPageMatchs
                 $resultat = "Match nul";
                 break;
             default: 
-                $resultat = "N\A";
+                $resultat = "$score";
                 break;
         }
         return $resultat;
@@ -177,7 +169,6 @@ class ControleurPageMatchs
      * @return string Le lieu sous forme de texte.
      */
     public function afficherLieu($lieu){
-        $resultat = "";
         switch ($lieu) {
             case "ext":
                 $resultat = "Extérieur";
@@ -186,7 +177,7 @@ class ControleurPageMatchs
                 $resultat = "A domicile";
                 break;
             default: 
-                $resultat = "N\A";
+                $resultat = "$lieu";
                 break;
         }
         return $resultat;
@@ -195,11 +186,11 @@ class ControleurPageMatchs
      /**
      * Formate la date et l'heure d'un match.
      * 
-     * @param Match $match L'objet match contenant la date et l'heure.
+     * @param array $match L'objet match contenant la date et l'heure.
      * @return string La date et l'heure formatées (Y-m-d H:i).
      */
     public function afficherDateHeure($match){
-        $dateTimeObj = new DateTime($match->getDate_et_heure());
+        $dateTimeObj = new DateTime($match["date_et_heure"]);
         $date_heure = $dateTimeObj->format('Y-m-d H:i'); 
         return $date_heure;
     }

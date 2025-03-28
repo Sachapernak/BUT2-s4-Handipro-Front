@@ -23,7 +23,7 @@ if (isset($_POST['id_match'])) {
 
     //Renseigner si le match sélectionné est passé ou à venir.
     foreach ($listeMatchs as $match) {
-        if ($match->getIdMatch() == $idMatch) {
+        if ($match["id_match"] == $idMatch) {
             $matchAVenir = true;
             $matchPasses = false;
             break;
@@ -47,38 +47,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 //Affichage des joueurs sélectionnés
 $joueurs = "";
 
-foreach ($listeJoueurs as $joueur) {
-    if ($joueur !== null) {
-        $n_licence = $joueur->getN_licence();
-        $jouer = $controleurMatchs->getInfosParticipants($idMatch, $n_licence);
+if ($listeJoueurs != null) {
+    foreach ($listeJoueurs as $joueur) {
+        if ($joueur !== null) {
+            $n_licence = $joueur["n_licence"];
+            $jouer = $controleurMatchs->getInfosParticipants($idMatch, $n_licence);
 
-        $poste = $jouer->getRole();
-        $estRemplacant = $controleurMatchs->afficherRemplacement($jouer->getEst_remplacant());
-        $note = $jouer->getNote();
+            $poste = $jouer["role"];
+            $estRemplacant = $controleurMatchs->afficherRemplacement($jouer["est_remplacant"]);
+            $note = $jouer["note"];
 
-        $nom = $joueur->getNom();
-        $prenom = $joueur->getPrenom();
-        $etoiles = $controleurMatchs->afficherEtoiles($note);
+            $nom = $joueur["nom"];
+            $prenom = $joueur['prenom'];
+            $etoiles = $controleurMatchs->afficherEtoiles($note);
 
-        $joueurs .= '
+            $joueurs .= '
             <div class="joueur">
                 <div>
                     <div class="en-tete-joueur">
                         <h5>' . $nom . ' ' . $prenom . '</h5> <span>' . $etoiles . ' </span>';
 
-        if (!$matchAVenir) { // Match passé : lien activé
-            $joueurs .= '
+            if (!$matchAVenir) { // Match passé : lien activé
+                $joueurs .= '
                         <a href="Saisie-Note.php?idJoueur=' . urlencode($n_licence) . '&idMatch=' . urlencode($idMatch) . '" class="saisie-note">
                             <i class="fa-solid fa-notes-medical" style="color: #f3ad35;"></i>
                         </a>';
-        } else { // Match à venir : lien désactivé
-            $joueurs .= '
+            } else { // Match à venir : lien désactivé
+                $joueurs .= '
                         <span class="saisie-note-disabled" title="Non disponible pour les matchs à venir">
                             <i class="fa-solid fa-notes-medical" style="color: gray;"></i>
                         </span>';
-        }
+            }
 
-        $joueurs .= '
+            $joueurs .= '
                     </div> 
                     
                     <div class ="infosJoueur"> 
@@ -89,8 +90,10 @@ foreach ($listeJoueurs as $joueur) {
                 </div>
             </div>
     ';
+        }
     }
 }
+
 ?>
 
 <!doctype html>
@@ -127,14 +130,14 @@ foreach ($listeJoueurs as $joueur) {
                         foreach ($listeMatchs as $match) {
 
                             $ligneSelect = '';
-                            if (isset($_POST['id_match']) && $_POST['id_match'] == $match->getIdMatch()) {
+                            if (isset($_POST['id_match']) && $_POST['id_match'] == $match["id_match"]) {
                                 $ligneSelect = 'ligneSelect';
                             }
                             echo '<tr class="clickable-row ' . $ligneSelect . '">';
-                            echo '<td><button type="submit" name="id_match" value="' . $match->getIdMatch() . '" class="invisible-btn"></button>' . $match->getIdMatch() . '</td>';
+                            echo '<td><button type="submit" name="id_match" value="' . $match["id_match"] . '" class="invisible-btn"></button>' . $match["id_match"] . '</td>';
                             echo '<td>' . $controleurMatchs->afficherDateHeure($match) . '</td>';
-                            echo '<td>' . $match->getAdversaire() . '</td>';
-                            echo '<td>' . $controleurMatchs->afficherLieu($match->getLieu()) . '</td>';
+                            echo '<td>' . $match["adversaire"] . '</td>';
+                            echo '<td>' . $controleurMatchs->afficherLieu($match["lieu"]) . '</td>';
                             echo '</tr>';
                         }
                         ?>
@@ -178,15 +181,15 @@ foreach ($listeJoueurs as $joueur) {
                         <?php
                         foreach ($listeMatchsPasses as $match) {
                             $ligneSelect = '';
-                            if (isset($_POST['id_match']) && $_POST['id_match'] == $match->getIdMatch()) {
+                            if (isset($_POST['id_match']) && $_POST['id_match'] == $match["id_match"]) {
                                 $ligneSelect = 'ligneSelect';
                             }
                             echo '<tr class="clickable-row ' . $ligneSelect . '">';
-                            echo '<td><button type="submit" name="id_match" value="' . $match->getIdMatch() . '" class="invisible-btn"></button>' . $match->getIdMatch() . '</td>';
+                            echo '<td><button type="submit" name="id_match" value="' . $match["id_match"] . '" class="invisible-btn"></button>' . $match["id_match"] . '</td>';
                             echo '<td>' . $controleurMatchs->afficherDateHeure($match) . '</td>';
-                            echo '<td>' . $match->getAdversaire() . '</td>';
-                            echo '<td>' . $controleurMatchs->afficherLieu($match->getLieu()) . '</td>';
-                            echo '<td>' . $controleurMatchs->afficherResultat($match->getResultat()) . '</td>';
+                            echo '<td>' . $match["adversaire"] . '</td>';
+                            echo '<td>' . $controleurMatchs->afficherLieu($match["lieu"]) . '</td>';
+                            echo '<td>' . $controleurMatchs->afficherResultat($match["resultat"]) . '</td>';
                             echo '</tr>';
                         }
                         ?>

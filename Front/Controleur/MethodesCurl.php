@@ -22,7 +22,6 @@ class MethodesCurl
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-        error_log(json_encode($data));
 
         // Set HTTP method and attach data if provided
         switch (strtoupper($method)) {

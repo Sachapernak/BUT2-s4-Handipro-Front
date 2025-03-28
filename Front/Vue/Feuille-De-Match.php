@@ -85,21 +85,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php
                         // Boucle pour afficher les joueurs
                         foreach ($listeJoueurs as $joueur) {
-                            $n_licence = $joueur->getN_licence();
+                            $n_licence = $joueur["n_licence"];
                             $estPresent = false;
-                            $key;
 
                             //Permet le pré-remplissage des champs role et position lorsque c'est une modification de séléction
                             for ($i = 0; $i < count($joueursDejaSelectionnes); $i++) {
-                                if ($joueursDejaSelectionnes[$i]->getN_licence() == $n_licence) {
+                                if ($joueursDejaSelectionnes[$i]["n_licence"] == $n_licence) {
                                     $estPresent = true;
                                     $key = $i;
                                 }
                             }
 
                             if ($estPresent) {
-                                $positionPreRemplie = $joueursDejaSelectionnes[$key]->getRole();
-                                $rolePreRemplie = $joueursDejaSelectionnes[$key]->getEst_remplacant();
+                                $positionPreRemplie = $joueursDejaSelectionnes[$key]["role"];
+                                $rolePreRemplie = $joueursDejaSelectionnes[$key]["est_remplacant"];
                                 $estSelectionne = true;
                             } else {
                                 $positionPreRemplie = "";
@@ -109,10 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             // Affichage des informations du joueur
                             echo '<tr>';
-                            echo '<td>' . $joueur->getN_licence() . '</td>';
-                            echo '<td>' . $joueur->getNom() . " " . $joueur->getPrenom() . '</td>';
-                            echo '<td>' . $joueur->getTaille() . ' cm </td>';
-                            echo '<td>' . $joueur->getPoids() . ' kg </td>';
+                            echo '<td>' . $joueur["n_licence"] . '</td>';
+                            echo '<td>' . $joueur["nom"] . " " . $joueur->getPrenom() . '</td>';
+                            echo '<td>' . $joueur["taille"] . ' cm </td>';
+                            echo '<td>' . $joueur["poids"] . ' kg </td>';
                             echo '<td class="scrollable">' . $controleurMatchs->getCommentairesJoueur($n_licence) . '</td>';
                             echo '<td>' . $controleurJoueurs->getNoteMoyenneJoueur($n_licence) . '</td>';
 

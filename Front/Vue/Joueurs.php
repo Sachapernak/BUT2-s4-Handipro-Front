@@ -17,14 +17,22 @@ if (isset($_POST['searchbar']) && !empty($_POST['searchbar'])) {
 //récupérer l'ensemble des joueurs
 $joueurs = ""; 
 
-foreach ($listeJoueurs as $joueur) {
-    $nom = $joueur->getNom();
-    $prenom = $joueur->getPrenom();
-    $nLicence = $joueur->getN_licence();
-    $statut = $joueur->getIntituleStatut();
-    $noteMoyenne = $controleur->afficherEtoiles($nLicence);
-    
-    $joueurs .= '
+if ($listeJoueurs != null){
+    foreach ($listeJoueurs as $joueur) {
+        $nom = $joueur['nom'];
+        $prenom = $joueur['prenom'];
+        $nLicence = $joueur['n_licence'];
+        $statut = $joueur["statut"];
+
+        $statut = match ($statut) {
+            "Ble" => "Blessé",
+            "Act" => "Actif",
+            "Abs" => "Absent",
+            default => "Non renseigné",
+        };
+        $noteMoyenne = $controleur->afficherEtoiles($nLicence);
+
+        $joueurs .= '
     <a class="divCliquable" href=".\Consulter-Infos-Joueur.php?nLicence=' . urlencode($nLicence) . '">
         <div class="joueur">
             <div>
@@ -35,7 +43,10 @@ foreach ($listeJoueurs as $joueur) {
             </div>
         </div>
     </a>';
+    }
 }
+
+
 ?>
 
 <!doctype html>
