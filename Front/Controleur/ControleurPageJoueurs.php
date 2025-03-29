@@ -1,26 +1,16 @@
 <?php
 
 namespace Controleur;
-
-use DAO\JoueurDAO;
-use DAO\JouerDAO;
-
-use Controleur\ObtenirTousLesJoueurs;
-use Controleur\RechercherParAttributsJoueurs;
-use Controleur\ObtenirMoyenneNoteJoueur;
+require_once "Config.php";
 
 class ControleurPageJoueurs
 {
-
-    private $joueurDAO;
-    private $jouerDAO;
 
      /**
      * Constructeur de la classe. Initialise les DAO nécessaires pour gérer les joueurs et leurs relations.
      */
     public function __construct(){
-        $this->joueurDAO = null;
-        $this->jouerDAO = null;
+
     }
 
      /**
@@ -29,11 +19,12 @@ class ControleurPageJoueurs
      * @return array Un tableau contenant les joueurs.
      */
     public function getJoueurs() : ?array {
-       /*
-        $obtenirTousLesJoueurs = new ObtenirTousLesJoueurs($this->joueurDAO);
-        return $obtenirTousLesJoueurs->executer();
-       */
-        return null;
+
+        $data = "?action=getJoueurs";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result == null ? null : $result["data"];
 
     }
 
@@ -44,11 +35,12 @@ class ControleurPageJoueurs
      * @return int La note moyenne du joueur.
      */
     public function getNoteMoyenneJoueur($n_licence): int{
-        /*
-        $obtenirMoyenneNoteJoueur = new ObtenirMoyenneNoteJoueur($this->jouerDAO, $n_licence);
-        return $obtenirMoyenneNoteJoueur->executer();
-        */
-        return 0;
+
+        $data = "?action=getMoyenneEval&id=$n_licence";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result == null ? 0 : $result["data"];
     }
 
     /**
@@ -74,7 +66,6 @@ class ControleurPageJoueurs
         return $etoile;
     }
 
-    // TODO : CHANGER LA SPEC : On prend une note et le transforme en etoile
 
      /**
      * Effectue une recherche de joueurs en fonction de critères spécifiques.
@@ -83,11 +74,13 @@ class ControleurPageJoueurs
      * @return array Les résultats correspondant aux critères.
      */
     public function resultatRecherche($recherche): ?array{
-        /*
-        $rechercherJoueurs = new RechercherParAttributsJoueurs($this->joueurDAO, $recherche);
-        return $rechercherJoueurs->executer();
-        */
-        return null;
+
+        $data = "?action=resultatRecherche&attribut=$recherche";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result == null ? null : $result["data"];
+
     }
 }
 

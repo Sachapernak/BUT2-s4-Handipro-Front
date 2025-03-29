@@ -1,47 +1,31 @@
 <?php
 
 namespace Controleur;
-
-use Controleur\ModifierJoueur;
-use DAO\JoueurDAO;
-use DAO\CommentaireDAO;
-use Controleur\ObtenirTousLesCommentaires;
-use Modele\Commentaire;
-use Modele\Joueur;
-use DAO\JouerDAO;
-use Controleur\RechercherJouerParJoueur;
-use Controleur\RechercherUnCommentaire;
-use Controleur\SupprimerUnJoueur;
-
+require_once "Config.php";
 class ControleurPageConsulterInfosJoueur 
 {
-    private $joueurDAO;
-
-    private $jouerDAO;
-    private $commentaireDAO;
-
 
     /**
      * Constructeur de la classe. Initialise les DAO nécessaires.
      */
     public function __construct()
     {
-        $this->joueurDAO = new JoueurDAO();
-        $this->jouerDAO = new JouerDAO();
-        $this->commentaireDAO = new commentaireDAO();
-
     }
 
     /**
      * Récupère un joueur à partir de son numéro de licence.
      *
      * @param string $n_licence Le numéro de licence du joueur.
-     * @return Joueur Le joueur correspondant.
+     * @return array Le joueur correspondant.
      */
-    public function recupererJoueur($n_licence): Joueur {
-        $rechercherUnJoueur = new RechercherUnJoueur($this->joueurDAO, $n_licence);
-        $joueur = $rechercherUnJoueur->executer();
-        return $joueur;
+    public function recupererJoueur($n_licence): ?array {
+
+        $data = "?action=recupererJoueur&id=$n_licence";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result == null ? null : $result["data"];
+
     }
 
     /**
@@ -52,8 +36,12 @@ class ControleurPageConsulterInfosJoueur
     public function recupererCommentaires() {
         $n_licence = $_GET['nLicence'];
 
-        $obtenirTousLesCommentaires = new ObtenirTousLesCommentaires($this->commentaireDAO, $n_licence);
-        return $obtenirTousLesCommentaires->executer();
+        $data = "?action=getCommentaireJoueur&id=$n_licence";
+
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result == null ? null : $result["data"];
     }
 
     /**
@@ -66,44 +54,55 @@ class ControleurPageConsulterInfosJoueur
         $commentaireSaisi = $_POST['commentaire'];
         $date = date('Y-m-d'); 
 
-        $commentaire = new Commentaire($n_licence, $date, $commentaireSaisi);
 
-        $creationCommentaire = new CreerUnCommentaire($this->commentaireDAO, $commentaire);
-        $creationCommentaire->executer();
+        $commentaire = array(
+            "id_joueur" => $n_licence,
+            "date" => $date,
+            "commentaire" => $commentaireSaisi
+        );
+
+        $data = "?action=recupererJoueurs&id=$n_licence";
+        $url = BACKURL."EndPointCommentaire.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("POST", $url, $commentaire);
+        $result = json_decode($response, true);
+        return $result == null ? null : $result["data"];
     }
 
 
      /**
      * Met à jour les informations d'un joueur.
      *
-     * @return Joueur Le joueur mis à jour.
+     * @return array les informations de mise a jour.
      */
-    public function mettreAJourJoueur()
+    public function mettreAJourJoueur(): ?array
     {
-        $n_licence = $_GET['nLicence'];
+        $n_licence = (int) $_GET['nLicence'];
 
         $nom = $_POST['nom'];
         $prenom = $_POST['prenom'];
         $statutComplet = $_POST['statut'];
         $statut = substr($statutComplet, 0, 3);
         $date_naissance = $_POST['date_naissance'];
-        $taille = $_POST['taille'];
+        $taille = (int) $_POST['taille'];
         $poids = $_POST['poids'];
 
-        $joueur = $this->joueurDAO->findById($n_licence);
-        $joueur->setNom($nom);
-        $joueur->setPrenom($prenom);
-        $joueur->setStatut($statut);
-        $joueur->setTaille($taille);
-        $joueur->setPoids($poids);
-        $joueur->setDate_de_naissance($date_naissance);
+        $joueur = [
+            "nom"               => $nom,
+            "prenom"            => $prenom,
+            "date_de_naissance" => $date_naissance,
+            "taille"            => $taille,
+            "poids"             => $poids,
+            "statut"            => $statut
+        ];
 
+        $url = BACKURL . "EndPointJoueur.php?id=" . $n_licence;
 
-        $modifierJoueur = new ModifierJoueur($this->joueurDAO, $joueur);
-        $modifierJoueur->executer();
+        $response = \Controleur\MethodesCurl::callAPI("PUT", $url, $joueur);
+        $result = json_decode($response, true);
 
-        return $this->joueurDAO->findById($n_licence);
+        return $result["data"];
     }
+
 
     /**
      * Vérifie si un joueur peut être supprimé (possible s'il n'a jamais participé à un match).
@@ -112,9 +111,12 @@ class ControleurPageConsulterInfosJoueur
      * @return bool True si le joueur peut être supprimé, False sinon.
      */
     public function peutEtreSupprime($n_licence){
-        $recherche = new RechercherJouerParJoueur($this->jouerDAO, $n_licence);
-        $res = $recherche->executer();
-        return empty($res);
+        $data = "?action=peutEtreSupprime&id=$n_licence";
+
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result == null ? false : $result["data"];
     }
 
      /**
@@ -124,19 +126,22 @@ class ControleurPageConsulterInfosJoueur
      * @return void
      */
     public function supprimerJoueur($n_licence) {
-        $suppression = new SupprimerUnJoueur($this->joueurDAO, $n_licence);
-        $suppression->executer();
-        header('Location: Joueurs.php');
+        $data = "?id=$n_licence";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("DELETE", $url);
+
     }
 
-    public function estCommentaireExistant(): bool {
+    public function estCommentaireExistant(): ?bool {
         $n_licence = $_GET['nLicence'];
         $date = date('Y-m-d'); 
 
-        $rechercherUnCommentaire = new RechercherUnCommentaire($this->commentaireDAO, $n_licence, $date);
-        $res = $rechercherUnCommentaire->executer();
-        
-        return $res!=null; 
+        $data = "?action=estCommentaireExistant&idJoueur=$n_licence&date=$date";
+
+        $url = BACKURL."EndPointCommentaire.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
     }
 
 }

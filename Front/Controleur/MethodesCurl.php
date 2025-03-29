@@ -22,13 +22,19 @@ class MethodesCurl
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-        error_log(json_encode($data));
 
         // Set HTTP method and attach data if provided
         switch (strtoupper($method)) {
             case "POST":
                 $data = json_encode($data);
                 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+                if ($data != null) {
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                }
+                break;
+            case "PATCH":
+                $data = json_encode($data);
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PATCH");
                 if ($data != null) {
                     curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
                 }

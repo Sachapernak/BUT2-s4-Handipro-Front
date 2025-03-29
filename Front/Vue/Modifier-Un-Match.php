@@ -1,6 +1,7 @@
 <?php
 require_once 'autoload.php';
 require 'Verif-Auth.php';
+
 use Controleur\ControleurPageModifierMatch;
 
 $controleur = new ControleurPageModifierMatch();
@@ -14,11 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 //Vaiables permettant le pré-remplissage des champs du formulaire
-$match = $controleur->recupererInfosMatch($idMatch);
-$date = $match->getDate();
-$heure = $match->getHeure();
-$adversaire = $match->getAdversaire();
-$lieu = $match->getlieu();
+$match = $controleur->recupererInfosMatch($idMatch)["data"];
+$date = explode(" ", $match["date_et_heure"])[0];
+$heure = explode(" ", $match["date_et_heure"])[1];
+$adversaire = $match["adversaire"];
+$lieu = $match["lieu"];
 
 ?>
 

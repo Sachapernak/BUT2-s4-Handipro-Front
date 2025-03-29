@@ -104,28 +104,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <form action="" method="POST">
                 <input type="hidden" name="action" value="mettreAJourJoueur">
                 <label for="nom" class="labelModif">Nom :</label>
-                <input type="text" id="nom" name="nom" value="<?php echo $joueur->getNom() ?>">
+                <input type="text" id="nom" name="nom" value="<?php echo $joueur["nom"] ?>">
 
                 <label for="prenom" class="labelModif">Prénom :</label>
-                <input type="text" id="prenom" name="prenom" value="<?php echo $joueur->getPrenom() ?>">
+                <input type="text" id="prenom" name="prenom" value="<?php echo $joueur["prenom"] ?>">
 
                 <label for="statut" class="labelModif">Statut :</label>
                 <select id="statut" name="statut">
-                    <option value="Act" <?php echo $joueur->getStatut() === 'Act' ? 'selected' : ''; ?>>Actif</option>
-                    <option value="Abs" <?php echo $joueur->getStatut() === 'Abs' ? 'selected' : ''; ?>>Absent</option>
-                    <option value="Ble" <?php echo $joueur->getStatut() === 'Ble' ? 'selected' : ''; ?>>Blessé</option>
-                    <option value="Sus" <?php echo $joueur->getStatut() === 'Sus' ? 'selected' : ''; ?>>Suspendu</option>
+                    <option value="Act" <?php echo $joueur["statut"] === 'Act' ? 'selected' : ''; ?>>Actif</option>
+                    <option value="Abs" <?php echo $joueur["statut"] === 'Abs' ? 'selected' : ''; ?>>Absent</option>
+                    <option value="Ble" <?php echo $joueur["statut"] === 'Ble' ? 'selected' : ''; ?>>Blessé</option>
+                    <option value="Sus" <?php echo $joueur["statut"] === 'Sus' ? 'selected' : ''; ?>>Suspendu</option>
                 </select>
 
                 <label for="date_naissance" class="labelModif">Date de naissance :</label>
                 <input type="date" id="date_naissance" name="date_naissance"
-                    value="<?php echo $joueur->getDate_de_naissance(); ?>">
+                    value="<?php echo $joueur["date_de_naissance"]; ?>">
 
                 <label for="taille" class="labelModif">Taille (cm) :</label>
-                <input type="number" id="taille" name="taille" value="<?php echo $joueur->getTaille() ?>" min="0">
+                <input type="number" id="taille" name="taille" value="<?php echo $joueur["taille"] ?>" min="0">
 
                 <label for="poids" class="labelModif">Poids (kg) :</label>
-                <input type="number" id="poids" name="poids" value="<?php echo $joueur->getPoids() ?>" min="0">
+                <input type="number" id="poids" name="poids" value="<?php echo $joueur["poids"] ?>" min="0">
 
                 <div class="form-buttons">
                     <button type="submit" class="btn btn-valider">Valider</button>
@@ -143,37 +143,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <!-- Informations du joueur -->
             <div>
-                <h2 class="licence">N° de licence : <?php echo $joueur->getN_licence() ?></h2>
+                <h2 class="licence">N° de licence : <?php echo $joueur["n_licence"] ?></h2>
             </div>
 
             <div class="info-item">
                 <label class="nom">Nom : </label>
-                <span class="nom"><?php echo $joueur->getNom() ?></span>
+                <span class="nom"><?php echo $joueur["nom"] ?></span>
             </div>
 
             <div class="info-item">
                 <label class="prenom">Prénom : </label>
-                <span class="prenom"><?php echo $joueur->getPrenom() ?></span>
+                <span class="prenom"><?php echo $joueur["prenom"] ?></span>
             </div>
 
             <div class="info-item">
                 <label class="statut">Statut : </label>
-                <span class="statut"><?php echo $joueur->getIntituleStatut() ?></span>
+                <span class="statut"><?php echo $joueur["statut"] ?></span>
             </div>
 
             <div class="info-item">
                 <label class="date_naissance">Date de naissance : </label>
-                <span class="date_naissance"><?php echo $joueur->getDate_de_naissance() ?></span>
+                <span class="date_naissance"><?php echo $joueur["date_de_naissance"] ?></span>
             </div>
 
             <div class="info-item">
                 <label class="taille">Taille : </label>
-                <span class="taille"><?php echo $joueur->getTaille() . " cm"; ?></span>
+                <span class="taille"><?php echo $joueur["taille"] . " cm"; ?></span>
             </div>
 
             <div class="info-item">
                 <label class="poids">Poids : </label>
-                <span class="poids"><?php echo $joueur->getPoids() . " kg"; ?></span>
+                <span class="poids"><?php echo $joueur["poids"] . " kg"; ?></span>
             </div>
 
             <!-- Afficher les commentaires -->
@@ -194,8 +194,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         if ($commentaires):
                             foreach ($commentaires as $commentaire): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($commentaire->getDate()); ?></td>
-                                    <td><?php echo htmlspecialchars($commentaire->getCommentaire()); ?></td>
+                                    <td><?php echo htmlspecialchars($commentaire["date"]); ?></td>
+                                    <td><?php echo htmlspecialchars($commentaire["commentaire"]); ?></td>
                                 </tr>
                             <?php endforeach;
                         else: ?>

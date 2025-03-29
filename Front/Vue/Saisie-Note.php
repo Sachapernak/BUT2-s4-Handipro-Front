@@ -10,15 +10,15 @@ $n_licence = $_GET['idJoueur'];
 $idMatch = $_GET['idMatch'];
 
 //Récupérer les informations du joueur
-$joueur = $controleur->recupererInfosJoueur($n_licence);
-$nom = $joueur->getNom();
-$prenom = $joueur->getPrenom();	
+$joueur = $controleur->recupererInfosJoueur($n_licence)["data"];
+$nom = $joueur["nom"];
+$prenom = $joueur["prenom"];
 
 //Récupérer les informations concernant la participation du joueur au match
-$jouer = $controleur->recupererInfosJouer($idMatch, $n_licence);	
-$note = $jouer->getNote();	
+$jouer = $controleur->recupererInfosJouer($idMatch, $n_licence)["data"];
+$note = $jouer["note"];
 
-//Soumission du formulaire de  modification de la note du joueur
+//Soumission du formulaire de modification de la note du joueur
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controleur->modifierJouer($idMatch, $n_licence);
 }

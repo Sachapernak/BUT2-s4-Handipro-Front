@@ -40,12 +40,11 @@ class ControleurConnexion
         if (isset($result['status_code'])) {
 
             if ($result['status_code'] == 400) {
-                error_log("Connexion pas OK: ".$result['status_message']);
+
                 $this->redirectWithError("".$result['status_message']);
 
             }
             // Stockez le token dans un cookie, valable 1 heure
-            error_log("OK !:".$result['status_message']. "jwt :".$result['jwt_token']);
             $_SESSION['authentifie'] = true;
             $_SESSION['idco'] = $login;
 

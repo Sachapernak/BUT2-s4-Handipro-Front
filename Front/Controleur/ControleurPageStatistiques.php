@@ -2,20 +2,12 @@
 
 namespace Controleur;
 
-use DAO\JoueurDAO;
-use DAO\MatchDAO;
-use DAO\JouerDAO;
-
-use Modele\Joueur;
-
+require_once 'Config.php';
 
 
 class ControleurPageStatistiques
 {
 
-    private $joueurDAO;
-    private $jouerDAO;
-    private $matchDAO;
 
     /**
      * Constructeur de la classe ControleurPageStatistiques.
@@ -23,9 +15,7 @@ class ControleurPageStatistiques
      */
     public function __construct()
     {
-        $this->joueurDAO = new JoueurDAO();
-        $this->jouerDAO = new JouerDAO();
-        $this->matchDAO = new MatchDAO();
+
     }
 
      /**
@@ -35,8 +25,12 @@ class ControleurPageStatistiques
      */
     public function getTotalVictoires(): int
     {
-        $total = $this->matchDAO->getTotalVictoires();
-        return $total;
+        $data = "?action=getNbTotalVictoires";
+        $url = BACKURL."EndPointStatistiques.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
+
     }
 
      /**
@@ -46,8 +40,11 @@ class ControleurPageStatistiques
      */
     public function getTotalDefaites(): int
     {
-        $total = $this->matchDAO->getTotalDefaites();
-        return $total;
+        $data = "?action=getNbTotalDefaites";
+        $url = BACKURL."EndPointStatistiques.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
     }
 
      /**
@@ -57,8 +54,11 @@ class ControleurPageStatistiques
      */
     public function getTotalNuls(): int
     {
-        $total = $this->matchDAO->getTotalNuls();
-        return $total;
+        $data = "?action=getNbTotalNuls";
+        $url = BACKURL."EndPointStatistiques.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
     }
 
      /**
@@ -68,15 +68,11 @@ class ControleurPageStatistiques
      */
     public function getPourcentVictoires(): float
     {
-        $nbVictoires = $this->getTotalVictoires();
-        $nbMatchs = $this->matchDAO->getTotalMatchs();
-        if ($nbMatchs == 0) {
-            return 0.0;
-        }
-
-        $pourcentageVictoires = ($nbVictoires / $nbMatchs) * 100;
-
-        return round($pourcentageVictoires, 2);
+        $data = "?action=getPourcentageVictoires";
+        $url = BACKURL."EndPointStatistiques.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
 
     }
 
@@ -87,15 +83,11 @@ class ControleurPageStatistiques
      */
     public function getPourcentDefaites(): float
     {
-        $nbDefaites = $this->getTotalDefaites();
-        $nbMatchs = $this->matchDAO->getTotalMatchs();
-        if ($nbMatchs == 0) {
-            return 0.0;
-        }
-
-        $pourcentageDefaites = ($nbDefaites / $nbMatchs) * 100;
-
-        return round($pourcentageDefaites, 2);
+        $data = "?action=getPourcentageDefaites";
+        $url = BACKURL."EndPointStatistiques.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
 
     }
 
@@ -106,108 +98,98 @@ class ControleurPageStatistiques
      */
     public function getPourcentNuls(): float
     {
-        $nbNuls = $this->getTotalNuls();
-        $nbMatchs = $this->matchDAO->getTotalMatchs();
-        if ($nbMatchs == 0) {
-            return 0.0;
-        }
-
-        $pourcentageNuls = ($nbNuls / $nbMatchs) * 100;
-
-        return round($pourcentageNuls,2);
+        $data = "?action=getPourcentageNuls";
+        $url = BACKURL."EndPointStatistiques.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
     }
 
       /**
      * Récupère le poste favori d'un joueur (le poste le plus joué par le joueur).
      *
-     * @param Joueur $joueur Objet Joueur pour lequel le poste favori doit être récupéré.
+     * @param $n_licence int numero de licence du joueur
      * @return string Retourne le poste favori du joueur.
      */
-    public function getPosteFavoris(Joueur $joueur): string{
-        $n_licence = $joueur->getN_licence();
-        $posteFav = $this->jouerDAO->getPositionFavoriteJoueur($n_licence);
-        return $posteFav;
+    public function getPosteFavoris($n_licence){
+        $data = "?action=getPostFavoris&id=$n_licence";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
     }
 
     /**
      * Récupère le nombre de titularisations d'un joueur.
      *
-     * @param Joueur $joueur Objet Joueur pour lequel le nombre de titularisations doit être récupéré.
+     * @param $n_licence int numero de licence du joueur
      * @return int Retourne le nombre de titularisations du joueur.
      */
-    public function getTitularisations(Joueur $joueur): int{
-        $n_licence = $joueur->getN_licence();
-        $titularisation = $this->jouerDAO->getTitularisationsJoueur($n_licence);
-        return $titularisation;
+    public function getTitularisations(int $n_licence){
+        $data = "?action=getNbTitularisations&id=$n_licence";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
     }
 
       /**
      * Récupère le nombre de remplacements d'un joueur.
      *
-     * @param Joueur $joueur Objet Joueur pour lequel le nombre de remplacements doit être récupéré.
+     * @param $n_licence int numero de licence du joueur
      * @return int Retourne le nombre de remplacements du joueur.
      */
-    public function getRemplacements(Joueur $joueur): int{
-        $n_licence = $joueur->getN_licence();
-        $titularisation = $this->jouerDAO->getRemplacementsJoueur($n_licence);
-        return $titularisation;
+    public function getRemplacements(int $n_licence){
+        $data = "?action=getNbRemplacements&id=$n_licence";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
     }
 
     /**
      * Récupère la moyenne des évaluations d'un joueur.
      *
-     * @param Joueur $joueur Objet Joueur pour lequel la moyenne des évaluations doit être récupérée.
+     * @param $n_licence int numero de licence du joueur
      * @return float Retourne la moyenne des évaluations du joueur, arrondie à deux décimales.
      */
-    public function getMoyenneEval(Joueur $joueur): float {
-        $n_licence = $joueur->getN_licence();
-        $moyenne = $this->jouerDAO->moyenneNoteJoueur($n_licence);
-
-        $moyenne = round($moyenne, 2);
-
-        if ($moyenne < 0 || $moyenne > 5) {
-            return 0;
-        }
-
-        return $moyenne;
+    public function getMoyenneEval(int $n_licence){
+        $data = "?action=getMoyenneEval&id=$n_licence";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
     }
 
     /**
      * Récupère le nombre de matchs consécutifs joués par un joueur.
      *
-     * @param Joueur $joueur Objet Joueur pour lequel le nombre de matchs consécutifs doit être récupéré.
+     * @param $n_licence int numero de licence du joueur
      * @return int Retourne le nombre de matchs consécutifs joués par le joueur.
      */
-    public function getMatchsConsecutifs(Joueur $joueur): int{
-        $n_licence = $joueur->getN_licence();
-        $titularisation = $this->jouerDAO->getNbMatchsConsecutifsJoueur($n_licence);
-        return $titularisation;
+    public function getMatchsConsecutifs(int $n_licence){
+        $data = "?action=getNbMatchConsecutif&id=$n_licence";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
     }
 
       /**
      * Calcule le pourcentage de victoires pour un joueur spécifique.
      *
-     * @param Joueur $joueur Objet Joueur pour lequel le pourcentage de victoires doit être calculé.
+     * @param $n_licence int numero de licence du joueur
      * @return float Retourne le pourcentage de victoires du joueur, arrondi à deux décimales.
      */
-    public function getPourcentVictoiresJoueur(Joueur $joueur): float{
-        $n_licence = $joueur->getN_licence();
-        
-        $nbVicJoueurs = $this->jouerDAO->getNbVictoiresJoueur($n_licence);
-        $nbMatchs = $this->matchDAO->getTotalMatchs();
-        if ($nbMatchs == 0) {
-            return 0.0;
-        }
+    public function getPourcentVictoiresJoueur(int $n_licence)
+    {
+        $data = "?action=getPourcentVictoireJoueur&id=$n_licence";
+        $url = BACKURL . "EndPointJoueur.php" . $data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result["data"];
 
-        $pourcentVic = ($nbVicJoueurs / $nbMatchs) * 100;
-        return round($pourcentVic, 2);
-
-        
     }
-
-
-
-
 }
 
 ?>
