@@ -86,30 +86,30 @@ $pourcentNuls = $controleurStats->getPourcentNuls();
                         foreach ($joueurs as $joueur): ?>
 
                             <tr>
-                                <td><?php echo htmlspecialchars($joueur->getNom() . " " . $joueur->getPrenom()); ?></td>
-                                <td><?php echo htmlspecialchars($joueur->getIntituleStatut()); ?></td>
+                                <td><?php echo htmlspecialchars($joueur["nom"] . " " . $joueur["prenom"]); ?></td>
+                                <td><?php echo htmlspecialchars($joueur["statut"]); ?></td>
                                 <td><?php 
-                                    $posteFav = $controleurStats->getPosteFavoris($joueur);                              
+                                    $posteFav = $controleurStats->getPosteFavoris($joueur["n_licence"]);
                                     echo htmlspecialchars($posteFav); ?>
                                 </td>
                                 <td><?php 
-                                    $titularisations = $controleurStats->getTitularisations($joueur);                              
+                                    $titularisations = $controleurStats->getTitularisations($joueur["n_licence"]);
                                     echo $titularisations; ?>
                                 </td>
                                 <td><?php 
-                                    $remplacements = $controleurStats->getRemplacements($joueur);                              
+                                    $remplacements = $controleurStats->getRemplacements($joueur["n_licence"]);
                                     echo $remplacements; ?>
                                 </td>
                                 <td><?php 
-                                    $moyenneEval = $controleurStats->getMoyenneEval($joueur);                              
+                                    $moyenneEval = $controleurStats->getMoyenneEval($joueur["n_licence"]);
                                     echo $moyenneEval; ?>
                                 </td>
                                 <td><?php 
-                                    $nbMatchsConscutifs = $controleurStats->getMatchsConsecutifs($joueur);                              
+                                    $nbMatchsConscutifs = $controleurStats->getMatchsConsecutifs($joueur["n_licence"]);
                                     echo $nbMatchsConscutifs; ?>
                                 </td>
                                 <td><?php 
-                                    $pourcentVic = $controleurStats->getPourcentVictoiresJoueur($joueur);                              
+                                    $pourcentVic = $controleurStats->getPourcentVictoiresJoueur($joueur["n_licence"]);
                                     echo $pourcentVic; ?>
                                 </td>
                                       

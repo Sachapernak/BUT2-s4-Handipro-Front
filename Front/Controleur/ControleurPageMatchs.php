@@ -84,7 +84,7 @@ class ControleurPageMatchs
     /**
      * Affiche une chaîne d'étoiles en fonction de la note donnée.
      *
-     * @param $note La note du joueur.
+     * @param $note int La note du joueur.
      * @return string La représentation des étoiles.
      */
     public function afficherEtoiles($note): string

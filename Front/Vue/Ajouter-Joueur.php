@@ -10,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $controleur = new ControleurPageAjouterJoueur();
     $res = $controleur->ajouterJoueur();
 
-    error_log("AJOUT DE JOUEUR : ". implode($res));
     if($res["status_code"] == 200){
         header('Location: Joueurs.php');
     } else {

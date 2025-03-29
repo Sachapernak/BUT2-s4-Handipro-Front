@@ -1,15 +1,11 @@
 <?php
 
 namespace Controleur;
-
-use DAO\MatchDAO;
-use Controleur\ModifierMatch;
-use Controleur\RechercherUnMatch;
-use Modele\Matchbasket;
+require_once 'Config.php';
 
 class ControleurPageSaisieDuScore {
 
-    private $matchDAO;
+
 
     /**
      * Constructeur de la classe ControleurPageSaisieDuScore.
@@ -17,7 +13,7 @@ class ControleurPageSaisieDuScore {
      */
     public function __construct()
     {
-        $this->matchDAO = new MatchDAO();
+
     }
 
     /**
@@ -29,13 +25,14 @@ class ControleurPageSaisieDuScore {
     {
         $score = $_POST['resultat'];
 
-        $match = $this->recupererInfosMatch($id_match);
-        
-        $match->setResultat($score);
+        $scoreArray  = array(
+            "resultat" => $score,
+        );
 
-        $misAJour = new ModifierMatch($this->matchDAO, $match); 
-        $misAJour->executer();
-
+        $data = "?id=$id_match";
+        $url = BACKURL."EndPointMatch.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("PATCH", $url, $scoreArray);
+        $result = json_decode($response, true);
         header('Location: Matchs.php');
         exit;
 
@@ -45,13 +42,15 @@ class ControleurPageSaisieDuScore {
      * Récupère les informations d'un match en utilisant son identifiant.
      *
      * @param int $idMatch L'identifiant du match à récupérer.
-     * @return mixed L'objet match correspondant à l'identifiant.
+     * @return array  L'objet match correspondant à l'identifiant.
      */
-    public function recupererInfosMatch($idMatch): ?MatchBasket{
-        $recherche = new RechercherUnMatch($this->matchDAO, $idMatch);
-        $match = $recherche->executer();
+    public function recupererInfosMatch($idMatch): ?array {
+        $data = "?action=getMatch&id=$idMatch";
+        $url = BACKURL."EndPointMatch.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result;
 
-        return $match;
     }
 
     /**
@@ -70,7 +69,7 @@ class ControleurPageSaisieDuScore {
                 $resultat = "A domicile";
                 break;
             default: 
-                $resultat = "Erreur";
+                $resultat = "$lieu";
                 break;
         }
         return $resultat;

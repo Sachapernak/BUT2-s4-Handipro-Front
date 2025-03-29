@@ -32,6 +32,13 @@ class MethodesCurl
                     curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
                 }
                 break;
+            case "PATCH":
+                $data = json_encode($data);
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PATCH");
+                if ($data != null) {
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                }
+                break;
             case "PUT":
                 $data = json_encode($data);
                 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");

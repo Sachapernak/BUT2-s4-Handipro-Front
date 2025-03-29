@@ -12,15 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controleur->saisirScore($idMatch);
 }
 
-//Recuperer les informations du match qui seront affichées
-$match = $controleur->recupererInfosMatch($idMatch);
-$date = $match->getDate();
-$heure = $match->getHeure();
-$adversaire = $match->getAdversaire();
-$lieu = $match->getlieu();
+//Vaiables permettant le pré-remplissage des champs du formulaire
+$match = $controleur->recupererInfosMatch($idMatch)["data"];
+$date = explode(" ", $match["date_et_heure"])[0];
+$heure = explode(" ", $match["date_et_heure"])[1];
+$adversaire = $match["adversaire"];
+$lieu = $match["lieu"];
 
 
-$valeurDefaut = $match->getResultat();  //S'il a déjà été saisi, il permet le pré-remplissage du champs de formulaire
+
+$valeurDefaut = $match["resultat"];  //S'il a déjà été saisi, il permet le pré-remplissage du champs de formulaire
 
 ?>
 

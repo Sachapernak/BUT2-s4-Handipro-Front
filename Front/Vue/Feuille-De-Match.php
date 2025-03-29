@@ -9,8 +9,8 @@ $controleurJoueurs = new ControleurPageJoueurs();
 
 $idMatch = $_GET['idMatch'];
 
-$listeJoueurs = $controleurMatchs->getJoueursActifs();
-$joueursDejaSelectionnes = $controleurMatchs->getInfosParticipation($idMatch);
+$listeJoueurs = $controleurMatchs->getJoueursActifs()["data"];
+$joueursDejaSelectionnes = $controleurMatchs->getInfosParticipation($idMatch)["data"] ?? array();
 
 $joueursSelectionnes = [];
 
@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($selectionJoueur as $licence => $valeur) {
         $position = $positions[$licence] ?? null;
         $role = $roles[$licence] ?? null;
+
         if ($position != null && $role != null) {
             $joueursSelectionnes[] = [
                 'licence' => $licence,
@@ -109,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             // Affichage des informations du joueur
                             echo '<tr>';
                             echo '<td>' . $joueur["n_licence"] . '</td>';
-                            echo '<td>' . $joueur["nom"] . " " . $joueur->getPrenom() . '</td>';
+                            echo '<td>' . $joueur["nom"] . " " . $joueur["prenom"] . '</td>';
                             echo '<td>' . $joueur["taille"] . ' cm </td>';
                             echo '<td>' . $joueur["poids"] . ' kg </td>';
                             echo '<td class="scrollable">' . $controleurMatchs->getCommentairesJoueur($n_licence) . '</td>';

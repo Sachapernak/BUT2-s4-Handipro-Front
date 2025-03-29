@@ -1,7 +1,7 @@
 <?php
 
 namespace Controleur;
-
+require_once 'Config.php';
 class ControleurPageFeuilleDeMatch
 {
 
@@ -13,20 +13,20 @@ class ControleurPageFeuilleDeMatch
 
     }
 
-    
 
     /**
      * Crée une participation (relation joueur-match).
      *
      * @param array $jouer L'array Jouer à insérer. (n_licence, id_match, est_remplacant, role)
      */
-    public function creerParticipation($jouer): void
+    public function creerParticipation($jouer): ?array
     {
 
         $data = "";
         $url = BACKURL."EndPointParticipation.php".$data;
         $response = \Controleur\MethodesCurl::callAPI("POST", $url, $jouer);
         $result = json_decode($response, true);
+        return $result;
 
     }
 
@@ -56,18 +56,27 @@ class ControleurPageFeuilleDeMatch
     {
         print_r($joueursSelectionnes);
         $this->viderJoueurPourUnMatch($id_match);
+
         for($i = 0; $i < count($joueursSelectionnes); $i++) {
+
             $n_licence = $joueursSelectionnes[$i]['licence'];
             $position = $joueursSelectionnes[$i]['position'];
             $role = $joueursSelectionnes[$i]['role'];
+
             $jouer = array(
                 "n_licence" => $n_licence,
                 "id_match" => $id_match,
-                "role" => $role,
-                "note" => null,
-                "position" => $position
+                "est_remplacant" => (int) $role,
+                "role" => $position,
+
             );
-            $this->creerParticipation($jouer);
+
+            $res= $this->creerParticipation($jouer);
+
+            if($res && $res["status_code"] != 200){
+                echo '<script type="text/javascript">window.alert("'.$res['status_message'].'");</script>';
+                break;
+            }
         }
         header('Location: Matchs.php');
     }
@@ -79,7 +88,10 @@ class ControleurPageFeuilleDeMatch
      */
     public function viderJoueurPourUnMatch($id_match)
     {
-        //TODO : FAIRE LA FONCTION QUAND ELLE EST DISPO DANS L'API
+        $data = "?action=viderJoueursPourUnMatch&id=$id_match";
+        $url = BACKURL."EndPointMatch.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("DELETE", $url);
+        $result = json_decode($response, true);
     }
 
 
@@ -90,8 +102,11 @@ class ControleurPageFeuilleDeMatch
      */
     public function getJoueursActifs(): array
     {
-        $recherche = new RechercherJoueursActifs($this->joueurDAO, 'act');
-        return $recherche->executer();
+        $data = "?action=getJoueursActifs";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result;
 
     }
 
@@ -144,14 +159,21 @@ class ControleurPageFeuilleDeMatch
      */
     public function getCommentairesJoueur($n_licence)
     {
-        $obtenirTousLesCommentaires = new ObtenirTousLesCommentaires($this->commentaireDAO, $n_licence);
-        $commentaires = $obtenirTousLesCommentaires->executer();
+        $data = "?action=getCommentaireJoueur&id=$n_licence";
+        $url = BACKURL."EndPointJoueur.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
 
         $tousLesCommentaires = "";
 
-        foreach ($commentaires as $commentaire) {
-            $tousLesCommentaires .= "<p>" . $commentaire->getDate(). " : " . $commentaire->getCommentaire(). "</p> <br>";
+        if($result["data"] != null){
+            foreach ($result["data"] as $commentaire) {
+                $tousLesCommentaires .= "<p>" . $commentaire["date"]. " : " . $commentaire["commentaire"]. "</p> <br>";
+            }
         }
+
+
+
         return $tousLesCommentaires;
     }
 
@@ -163,9 +185,11 @@ class ControleurPageFeuilleDeMatch
      */
     public function getInfosParticipation($idMatch)
     {
-        $recherche = new RechercherJouerParMatch($this->jouerDAO, $idMatch);
-        $listeJoueursParticipants = $recherche->executer();
-        return $listeJoueursParticipants;
+        $data = "?action=getInfosParticipation&id=$idMatch";
+        $url = BACKURL."EndPointMatch.php".$data;
+        $response = \Controleur\MethodesCurl::callAPI("GET", $url);
+        $result = json_decode($response, true);
+        return $result;
     }
 
 }
