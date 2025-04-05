@@ -5,38 +5,30 @@ require_once 'Config.php';
 
 class ControleurPageSaisieNote
 {
-
-
-     /**
+    /**
      * Constructeur de la classe ControleurPageSaisieNote.
-     * Initialise les objets DAO utilisés pour interagir avec les données des joueurs et des matchs.
      */
-    public function __construct()
-    {
-
-    }
-
+    public function __construct() {}
 
     /**
      * Modifie la note d'un joueur pour un match donné.
      *
      * @param int $idMatch L'identifiant du match.
      * @param int $n_licence Le numéro de licence du joueur.
-     * @return array |null Retourne l'objet Jouer mis à jour après modification.
+     * @return array|null Résultat de l'opération ou null en cas d'échec.
      */
-    public function modifierJouer($idMatch, $n_licence): ?array
+    public function modifierJouer(int $idMatch, int $n_licence): ?array
     {
         $note = $_POST["note"];
 
-
-        $scoreArray  = array(
+        $scoreArray = [
             "note" => $note,
-        );
+        ];
 
-        $data = "?action=modifierNoteParticipation&idJ=$n_licence&idM=$idMatch";
-        $url = BACKURL."EndPointParticipation.php".$data;
+        $url = BACKURL . "participations/$n_licence/$idMatch/modifier-note";
         $response = \Controleur\MethodesCurl::callAPI("PATCH", $url, $scoreArray);
         $result = json_decode($response, true);
+
         header('Location: Matchs.php');
         return $result;
     }
@@ -46,33 +38,27 @@ class ControleurPageSaisieNote
      *
      * @param int $idMatch L'identifiant du match.
      * @param int $n_licence Le numéro de licence du joueur.
-     * @return array |null Retourne l'objet Jouer contenant les informations du joueur pour ce match ou null s'il n'est pas trouvé.
+     * @return array|null Données de participation ou null si non trouvées.
      */
-    public function recupererInfosJouer($idMatch, $n_licence): ?array {
-
-        $data = "?action=getInfosParticipation&idM=$idMatch&idJ=$n_licence";
-        $url = BACKURL."EndPointParticipation.php".$data;
+    public function recupererInfosJouer(int $idMatch, int $n_licence): ?array
+    {
+        $url = BACKURL . "participations/$n_licence/$idMatch";
         $response = \Controleur\MethodesCurl::callAPI("GET", $url);
         $result = json_decode($response, true);
-        return $result;
+        return $result["data"] ?? null;
     }
 
     /**
-     * Récupère les informations d'un joueur en fonction de son numéro de licence.
+     * Récupère les informations d'un joueur via son numéro de licence.
      *
      * @param int $n_licence Le numéro de licence du joueur.
-     * @return array|null Retourne l'objet Joueur correspondant à la licence donnée et null s'il n'est pas trouvé.
+     * @return array|null Données du joueur ou null si non trouvées.
      */
-    public function recupererInfosJoueur($n_licence): ?array{
-
-        $data = "?action=recupererJoueur&id=$n_licence";
-        $url = BACKURL."EndPointJoueur.php".$data;
+    public function recupererInfosJoueur(int $n_licence): ?array
+    {
+        $url = BACKURL . "joueurs/" . $n_licence;
         $response = \Controleur\MethodesCurl::callAPI("GET", $url);
         $result = json_decode($response, true);
-        return $result;
+        return $result["data"] ?? null;
     }
-
-
 }
-
-?>

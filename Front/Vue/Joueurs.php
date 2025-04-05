@@ -28,7 +28,7 @@ if ($listeJoueurs != null){
             "Ble" => "Blessé",
             "Act" => "Actif",
             "Abs" => "Absent",
-            default => "Non renseigné",
+            default => "$statut",
         };
         $noteMoyenne = $controleur->afficherEtoiles($nLicence);
 
