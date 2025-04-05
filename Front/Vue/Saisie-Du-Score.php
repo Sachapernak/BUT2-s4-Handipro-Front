@@ -13,11 +13,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 //Vaiables permettant le pré-remplissage des champs du formulaire
-$match = $controleur->recupererInfosMatch($idMatch)["data"];
-$date = explode(" ", $match["date_et_heure"])[0];
-$heure = explode(" ", $match["date_et_heure"])[1];
-$adversaire = $match["adversaire"];
-$lieu = $match["lieu"];
+$match = $controleur->recupererInfosMatch($idMatch);
+
+if ($match && isset($match["date_et_heure"])) {
+    $parts = explode(" ", $match["date_et_heure"]);
+    $date = $parts[0] ?? '';
+    $heure = $parts[1] ?? '';
+} else {
+    $date = '';
+    $heure = '';
+}
+
+$adversaire = $match["adversaire"] ?? '';
+$lieu = $match["lieu"] ?? '';
+$valeurDefaut = $match["resultat"] ?? '';
 
 
 

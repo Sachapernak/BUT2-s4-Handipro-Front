@@ -15,11 +15,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 //Vaiables permettant le pré-remplissage des champs du formulaire
-$match = $controleur->recupererInfosMatch($idMatch)["data"];
-$date = explode(" ", $match["date_et_heure"])[0];
-$heure = explode(" ", $match["date_et_heure"])[1];
-$adversaire = $match["adversaire"];
-$lieu = $match["lieu"];
+$match = $controleur->recupererInfosMatch($idMatch);
+
+if ($match && isset($match["date_et_heure"], $match["adversaire"], $match["lieu"])) {
+    $parts = explode(" ", $match["date_et_heure"]);
+    $date = $parts[0] ?? '';
+    $heure = $parts[1] ?? '';
+    $adversaire = $match["adversaire"];
+    $lieu = $match["lieu"];
+} else {
+    // Valeurs par défaut pour éviter les erreurs d'affichage
+    $date = '';
+    $heure = '';
+    $adversaire = '';
+    $lieu = '';
+}
+
 
 ?>
 
@@ -57,9 +68,9 @@ $lieu = $match["lieu"];
                     <input type="text" id="adversaire" name="adversaire" placeholder="Adversaire" required value="<?php echo $adversaire; ?>">
 
                     <label for="lieu">Lieu :</label>
-                    <select id="lieu" name="lieu" value="<?php echo $lieu; ?>">
-                        <option value="dom">A domicile</option>
-                        <option value="ext">Extérieur</option>
+                    <select id="lieu" name="lieu">
+                        <option value="dom" <?php echo $lieu === "dom" ? "selected" : ""; ?>>A domicile</option>
+                        <option value="ext" <?php echo $lieu === "ext" ? "selected" : ""; ?>>Extérieur</option>
                     </select>
                 </div>
 

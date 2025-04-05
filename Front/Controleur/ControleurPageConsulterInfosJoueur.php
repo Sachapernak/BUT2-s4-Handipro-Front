@@ -1,90 +1,84 @@
 <?php
 
 namespace Controleur;
-require_once "Config.php";
-class ControleurPageConsulterInfosJoueur 
-{
 
+require_once "Config.php";
+use DateTime;
+
+class ControleurPageConsulterInfosJoueur
+{
     /**
-     * Constructeur de la classe. Initialise les DAO nécessaires.
+     * Constructeur de la classe.
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Récupère un joueur à partir de son numéro de licence.
      *
      * @param string $n_licence Le numéro de licence du joueur.
-     * @return array Le joueur correspondant.
+     * @return array|null Le joueur correspondant ou null si introuvable.
      */
-    public function recupererJoueur($n_licence): ?array {
-
-        $data = "?action=recupererJoueur&id=$n_licence";
-        $url = BACKURL."EndPointJoueur.php".$data;
+    public function recupererJoueur($n_licence): ?array
+    {
+        $url = BACKURL . "joueurs/" . $n_licence;
         $response = \Controleur\MethodesCurl::callAPI("GET", $url);
         $result = json_decode($response, true);
-        return $result == null ? null : $result["data"];
-
+        return $result["data"] ?? null;
     }
 
     /**
      * Récupère tous les commentaires associés à un joueur.
      *
-     * @return array Un tableau de commentaires pour le joueur.
+     * @return array|null Un tableau de commentaires ou null.
      */
-    public function recupererCommentaires() {
+    public function recupererCommentaires(): ?array
+    {
         $n_licence = $_GET['nLicence'];
-
-        $data = "?action=getCommentaireJoueur&id=$n_licence";
-
-        $url = BACKURL."EndPointJoueur.php".$data;
+        $url = BACKURL . "joueurs/" . $n_licence . "/commentaires";
         $response = \Controleur\MethodesCurl::callAPI("GET", $url);
         $result = json_decode($response, true);
-        return $result == null ? null : $result["data"];
+        return $result["data"] ?? null;
     }
 
     /**
      * Ajoute un commentaire pour un joueur.
      *
-     * @return void
+     * @return array|null Le commentaire ajouté ou null en cas d'erreur.
      */
-    public function ajouterCommentaire(){
+    public function ajouterCommentaire(): ?array
+    {
         $n_licence = $_GET['nLicence'];
         $commentaireSaisi = $_POST['commentaire'];
-        $date = date('Y-m-d'); 
+        $date = date('Y-m-d');
 
+        $commentaire = [
+            "id_joueur"  => $n_licence,
+            "date"       => $date,
+            "commentaire"=> $commentaireSaisi
+        ];
 
-        $commentaire = array(
-            "id_joueur" => $n_licence,
-            "date" => $date,
-            "commentaire" => $commentaireSaisi
-        );
-
-        $data = "?action=recupererJoueurs&id=$n_licence";
-        $url = BACKURL."EndPointCommentaire.php".$data;
+        $url = BACKURL . "commentaires";
         $response = \Controleur\MethodesCurl::callAPI("POST", $url, $commentaire);
         $result = json_decode($response, true);
-        return $result == null ? null : $result["data"];
+        return $result["data"] ?? null;
     }
 
-
-     /**
+    /**
      * Met à jour les informations d'un joueur.
      *
-     * @return array les informations de mise a jour.
+     * @return array|null Les informations mises à jour ou null en cas d'échec.
      */
     public function mettreAJourJoueur(): ?array
     {
         $n_licence = (int) $_GET['nLicence'];
 
-        $nom = $_POST['nom'];
-        $prenom = $_POST['prenom'];
-        $statutComplet = $_POST['statut'];
-        $statut = substr($statutComplet, 0, 3);
-        $date_naissance = $_POST['date_naissance'];
-        $taille = (int) $_POST['taille'];
-        $poids = $_POST['poids'];
+        $nom             = $_POST['nom'];
+        $prenom          = $_POST['prenom'];
+        $statutComplet   = $_POST['statut'];
+        $statut          = substr($statutComplet, 0, 3);
+        $date_naissance  = $_POST['date_naissance'];
+        $taille          = (int) $_POST['taille'];
+        $poids           = $_POST['poids'];
 
         $joueur = [
             "nom"               => $nom,
@@ -95,56 +89,51 @@ class ControleurPageConsulterInfosJoueur
             "statut"            => $statut
         ];
 
-        $url = BACKURL . "EndPointJoueur.php?id=" . $n_licence;
-
+        $url = BACKURL . "joueurs/" . $n_licence;
         $response = \Controleur\MethodesCurl::callAPI("PUT", $url, $joueur);
         $result = json_decode($response, true);
-
-        return $result["data"];
+        return $result["data"] ?? null;
     }
 
-
     /**
-     * Vérifie si un joueur peut être supprimé (possible s'il n'a jamais participé à un match).
+     * Vérifie si un joueur peut être supprimé.
      *
      * @param string $n_licence Le numéro de licence du joueur.
      * @return bool True si le joueur peut être supprimé, False sinon.
      */
-    public function peutEtreSupprime($n_licence){
-        $data = "?action=peutEtreSupprime&id=$n_licence";
-
-        $url = BACKURL."EndPointJoueur.php".$data;
+    public function peutEtreSupprime($n_licence): bool
+    {
+        $url = BACKURL . "joueurs/" . $n_licence . "/supprimable";
         $response = \Controleur\MethodesCurl::callAPI("GET", $url);
         $result = json_decode($response, true);
-        return $result == null ? false : $result["data"];
+        return $result["data"] ?? false;
     }
 
-     /**
+    /**
      * Supprime un joueur de la base de données.
      *
      * @param string $n_licence Le numéro de licence du joueur.
      * @return void
      */
-    public function supprimerJoueur($n_licence) {
-        $data = "?id=$n_licence";
-        $url = BACKURL."EndPointJoueur.php".$data;
-        $response = \Controleur\MethodesCurl::callAPI("DELETE", $url);
-
+    public function supprimerJoueur($n_licence): void
+    {
+        $url = BACKURL . "joueurs/" . $n_licence;
+        \Controleur\MethodesCurl::callAPI("DELETE", $url);
     }
 
-    public function estCommentaireExistant(): ?bool {
+    /**
+     * Vérifie si un commentaire existe déjà pour le joueur à la date du jour.
+     *
+     * @return bool|null True si le commentaire existe, False sinon, null en cas d'erreur.
+     */
+    public function estCommentaireExistant(): ?bool
+    {
         $n_licence = $_GET['nLicence'];
-        $date = date('Y-m-d'); 
+        $date = date('Y-m-d');
 
-        $data = "?action=estCommentaireExistant&idJoueur=$n_licence&date=$date";
-
-        $url = BACKURL."EndPointCommentaire.php".$data;
+        $url = BACKURL . "commentaires/existe/" . $n_licence . "/" . $date;
         $response = \Controleur\MethodesCurl::callAPI("GET", $url);
         $result = json_decode($response, true);
-        return $result["data"];
+        return $result["data"] ?? null;
     }
-
 }
-
-
-?>

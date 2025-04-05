@@ -1,3 +1,3 @@
 <?php
-const AUTHURL = "http://handi.localhost/Auth/Views/endpointAuth.php";
-const BACKURL = "handiback.localhost/EndPoint/";
+const AUTHURL = "https://handipromanager.alwaysdata.net/handiauth/auth";
+const BACKURL = "https://handipromanager.alwaysdata.net/handiback/api/";

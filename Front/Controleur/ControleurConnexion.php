@@ -39,7 +39,7 @@ class ControleurConnexion
         // Vérif si la réponse contient bien le token JWT
         if (isset($result['status_code'])) {
 
-            if ($result['status_code'] == 400) {
+            if ($result['status_code'] == 400 || $result['status_code'] == 401) {
 
                 $this->redirectWithError("".$result['status_message']);
 
