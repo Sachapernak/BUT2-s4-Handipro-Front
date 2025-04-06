@@ -1,8 +1,13 @@
-# BUT2-s4-Handipro-Front
-Projet universitaire sur la mise en place d'une API Rest - partie front
+# Partie "Front" du projet universitaire Handipro Manager
+Ce dépot contient le site web de l'application Handipro Manager.
 
 # Lien
 Le serveur est disponnible a l'addresse :
-https://handipromanager.alwaysdata.net/handifront/Vue/Accueil.php
+https://handipromanager.alwaysdata.net/handifront/Vue/Accueil.php<br>
 
-Pour obtenir un code d'access, me contacter
+Une authentification est nécessaire.
+
+# Note
+Si vous souhaitez essayer le site, merci de nous contacter afin d'obtenir un identifiant.
+
+
